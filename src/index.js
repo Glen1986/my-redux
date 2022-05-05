@@ -10,7 +10,7 @@ const store = createStore((state = 0, action) => {
     console.log({ state, action })
     return state
 })
-console.log({ store })
+store.dispatch({ type: 'action', payload: 2 })
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
