@@ -1,16 +1,35 @@
 import React from 'react'
-import ReactDOM from 'react-dom/client'
+import ReactDOM from 'react-dom'
 import { createStore } from 'redux'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 
 //funcion reducer
-const store = createStore((state = 0, action) => {
+const store = createStore((state = 1, action) => {
     //action = {type: 'tipo de accion', payload: any}
-    console.log({ state, action })
-    return state
+    switch (action.type) {
+        case 'action': {
+            return action.payload
+        }
+        case 'increm': {
+            return state + action.payload
+        }
+        case 'decrem': {
+            return state - action.payload
+        }
+        default:
+            return state
+    }
 })
-store.dispatch({ type: 'action', payload: 2 })
+console.log(store.getState())
+store.dispatch({ type: 'increm', payload: 2 })
+console.log(store.getState())
+store.dispatch({ type: 'decrem', payload: 2 })
+console.log(store.getState())
+store.dispatch({ type: 'action', payload: 'weed' })
+console.log(store.getState())
+store.dispatch({ type: 'inrcrem', payload: 4 })
+console.log(store.getState())
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
