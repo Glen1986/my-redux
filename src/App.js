@@ -1,41 +1,38 @@
-import { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
-export const reducer = (state = 0, action) => {
-    console.log({ action, state })
-    switch (action.type) {
-        case 'increm':
-            return state + 1
-        case 'decrem':
-            return state - 1
-        case 'set':
-            return action.payload
-        default:
-            return state
-    }
+const initialState = {
+    entities: [],
 }
-function App() {
-    const [valor, setValor] = useState(0)
-    const dispatch = useDispatch()
-    const state = useSelector((state) => state)
-    const set = () => {
-        dispatch({ type: 'set', payload: valor })
-        setValor('')
+export const reducer = (state = initialState, action) => {
+    switch (action.type) {
+        case 'todo/add': {
+            console.log('reducer')
+            return {
+                ...state,
+                entities: [{}],
+            }
+        }
     }
-
+    return state
+}
+const App = () => {
+    const dispatch = useDispatch()
+    const state = useSelector((x) => x)
+    console.log(state, 'rendering')
     return (
         <div>
-            Cerdo Mojado
-            <p>contador:{state} </p>
-            <button onClick={() => dispatch({ type: 'increm' })}>Increm</button>
-            <button onClick={() => dispatch({ type: 'decrem' })}>decrem</button>
-            <button onClick={set}>set</button>
-            <input
-                value={valor}
-                onChange={(e) => setValor(Number(e.target.value))}
-            />
+            <form>
+                <input type="text" />
+            </form>
+            <button onClick={() => dispatch({ type: 'todo/add' })}>
+                todos
+            </button>
+            <button>completados</button>
+            <button>incompletos</button>
+            <ul>
+                <li>todo1</li>
+                <li>todo2</li>
+            </ul>
         </div>
     )
 }
-
 export default App
