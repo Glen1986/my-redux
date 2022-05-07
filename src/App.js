@@ -1,10 +1,7 @@
 import { useState } from 'react'
+import { combineReducers } from 'redux'
 import { useDispatch, useSelector } from 'react-redux'
 
-const initialState = {
-    entities: [],
-    filter: 'all',
-}
 export const filterReducer = (state = 'all', action) => {
     switch (action.type) {
         case 'filter/set':
@@ -23,7 +20,7 @@ export const todosReducer = (state = [], action) => {
                 if (todo.id === action.payload.id) {
                     return { ...todo, completed: !todo.completed }
                 }
-                console.log(todo)
+                // console.log(todo)
                 return todo
             })
             return newTodos
@@ -33,47 +30,14 @@ export const todosReducer = (state = [], action) => {
     }
 }
 
-export const reducer = (state = initialState, action) => {
-    return {
-        entities: todosReducer(state.entities, action),
-        filter: filterReducer(state.entities, action),
-    }
-}
-// export const reducer = (state = initialState, action) => {
-// switch (action.type) {
-// case 'todo/add': {
-// return {
-// ...state,
-// entities: state.entities.concat({ ...action.payload }),
-// }
-// }
-// case 'todo/complete': {
-// const newTodos = state.entities.map((todo) => {
-// if (todo.id === action.payload.id) {
-// return { ...todo, completed: !todo.completed }
-// }
-// console.log(todo)
-// return todo
-// })
-// return {
-// ...state,
-// entities: newTodos,
-// }
-// }
-// case 'filter/set': {
-// console.log(state, action.payload)
-// return {
-// ...state,
-// filter: action.payload,
-// }
-// }
-// default:
-// }
-// return state
-// }
+export const reducer = combineReducers({
+    entities: todosReducer,
+    filter: filterReducer,
+})
+
 const selectTodos = (state) => {
     const { entities, filter } = state
-    console.log(entities, filter)
+    // console.log(entities, filter)
     if (filter === 'complete') {
         return entities.filter((todo) => todo.completed)
     }
