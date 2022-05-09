@@ -33,6 +33,23 @@ export const filterReducer = (state = 'all', action) => {
             return state
     }
 }
+const initialFetching = { loading: 'idle', error: null }
+export const fetchingReducer = (state = initialFetching, action) => {
+    switch (action.type) {
+        case 'todod/pending': {
+            return { ...state, loading: 'pending' }
+        }
+        case 'fulfilled': {
+            return { ...state, loading: 'succeded' }
+        }
+        case 'todos/error': {
+            return { error: action.error, loading: 'rejected' }
+        }
+        default:
+            return state
+    }
+}
+
 export const todosReducer = (state = [], action) => {
     switch (action.type) {
         case 'todos/fulfiled': {
@@ -57,12 +74,18 @@ export const todosReducer = (state = [], action) => {
 }
 
 export const reducer = combineReducers({
-    entities: todosReducer,
+    todos: combineReducers({
+        status: fetchingReducer,
+        entities: todosReducer,
+    }),
     filter: filterReducer,
 })
 
 const selectTodos = (state) => {
-    const { entities, filter } = state
+    const {
+        todos: { entities },
+        filter,
+    } = state
     // console.log(entities, filter)
     if (filter === 'complete') {
         return entities.filter((todo) => todo.completed)
@@ -73,6 +96,7 @@ const selectTodos = (state) => {
     return entities
 }
 
+const selectStatus = (state) => state.todos.status
 const TodoItem = ({ todo }) => {
     const dispatch = useDispatch()
     return (
@@ -88,6 +112,7 @@ const App = () => {
     const [value, setValue] = useState()
     const dispatch = useDispatch()
     const todos = useSelector(selectTodos)
+    const status = useSelector(selectStatus)
 
     const submit = (e) => {
         e.preventDefault()
@@ -98,6 +123,12 @@ const App = () => {
         const todo = { title: value, completed: false, id }
         dispatch({ type: 'todo/add', payload: todo })
         setValue('')
+    }
+    if (status.loading === 'pending') {
+        return <p>Cargando...</p>
+    }
+    if (status.loading === 'rejected') {
+        return <div>{status.error}</div>
     }
     return (
         <div>
