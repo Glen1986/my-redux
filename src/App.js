@@ -9,19 +9,28 @@ export const asyncMiddleware = (store) => (next) => (action) => {
     }
     return next(action)
 }
+const setPending = () => ({ type: 'todos/pending' })
+const setFulfilled = (payload) => ({ type: 'todos/fulfilled', payload })
+const setError = (e) => ({ type: 'todos/error', error: e.message })
+const setComplete = (payload) => ({ type: 'todo/complete', payload })
+const setAdd = (payload) => ({ type: 'todo/add', payload })
+const setFilter = (payload) => ({ type: 'filter/set', payload })
+// const setFulfilled = (payload) => ({ type: 'todos/fulfilled', payload })
+
 export const fetchThunk = () => async (dispatch) => {
     // console.log('soy un thunk', dispatch)
-    dispatch({ type: 'todos/pending' })
+    dispatch(setPending())
     try {
         const response = await fetch(
             'https://jsonplaceholder.typicode.com/todos'
         )
         const data = await response.json()
         const todos = data.slice(0, 10)
-        dispatch({ type: 'todos/fulfiled', payload: todos })
+        // dispatch({ type: 'todos/fulfiled', payload: todos })
+        dispatch(setFulfilled(todos))
         // console.log(todos)
     } catch (e) {
-        dispatch({ type: 'todos/error', error: e.message })
+        dispatch(setError())
     }
 }
 
@@ -36,10 +45,10 @@ export const filterReducer = (state = 'all', action) => {
 const initialFetching = { loading: 'idle', error: null }
 export const fetchingReducer = (state = initialFetching, action) => {
     switch (action.type) {
-        case 'todod/pending': {
+        case 'todos/pending': {
             return { ...state, loading: 'pending' }
         }
-        case 'fulfilled': {
+        case 'todos/fulfilled': {
             return { ...state, loading: 'succeded' }
         }
         case 'todos/error': {
@@ -52,7 +61,7 @@ export const fetchingReducer = (state = initialFetching, action) => {
 
 export const todosReducer = (state = [], action) => {
     switch (action.type) {
-        case 'todos/fulfiled': {
+        case 'todos/fulfilled': {
             return action.payload
         }
         case 'todo/add': {
@@ -102,7 +111,7 @@ const TodoItem = ({ todo }) => {
     return (
         <li
             style={{ textDecoration: todo.completed ? 'line-through' : 'none' }}
-            onClick={() => dispatch({ type: 'todo/complete', payload: todo })}
+            onClick={() => dispatch(setComplete(todo))}
         >
             {todo.title}
         </li>
@@ -121,7 +130,7 @@ const App = () => {
         }
         const id = Math.random().toString(36)
         const todo = { title: value, completed: false, id }
-        dispatch({ type: 'todo/add', payload: todo })
+        dispatch(setAdd(todo))
         setValue('')
     }
     if (status.loading === 'pending') {
@@ -138,23 +147,11 @@ const App = () => {
                     onChange={(e) => setValue(e.target.value)}
                 />
             </form>
-            <button
-                onClick={() => dispatch({ type: 'filter/set', payload: 'all' })}
-            >
-                todos
-            </button>
-            <button
-                onClick={() =>
-                    dispatch({ type: 'filter/set', payload: 'complete' })
-                }
-            >
+            <button onClick={() => dispatch(setFilter('all'))}>todos</button>
+            <button onClick={() => dispatch(setFilter('complete'))}>
                 completados
             </button>
-            <button
-                onClick={() =>
-                    dispatch({ type: 'filter/set', payload: 'incomplete' })
-                }
-            >
+            <button onClick={() => dispatch(setFilter('incomplete'))}>
                 incompletos
             </button>
             <button onClick={() => dispatch(fetchThunk())}>Fecth</button>
