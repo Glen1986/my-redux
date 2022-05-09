@@ -9,6 +9,8 @@ export const setComplete = (payload) => ({ type: 'todos/complete', payload })
 
 export const setFilter = (payload) => ({ type: 'filter/set', payload })
 
+export const setAdd = (payload) => ({ type: 'todo/add', payload })
+
 export const fetchThunk = () => async (dispatch) => {
     // console.log('soy un thunk', dispatch)
     dispatch(setPending())
@@ -22,6 +24,14 @@ export const fetchThunk = () => async (dispatch) => {
         dispatch(setFulfilled(todos))
     } catch (e) {
         dispatch(setError())
+    }
+}
+export const filterReducer = (state = 'all', action) => {
+    switch (action.type) {
+        case 'filter/set':
+            return action.payload
+        default:
+            return state
     }
 }
 
@@ -50,7 +60,7 @@ export const todosReducer = (state = [], action) => {
         case 'todos/fulfilled': {
             return action.payload
         }
-        case 'todo/complete': {
+        case 'todos/complete': {
             const newTodos = state.map((todo) => {
                 if (todo.id === action.payload.id) {
                     return { ...todo, completed: !todo.completed }
@@ -64,15 +74,6 @@ export const todosReducer = (state = [], action) => {
             return state
     }
 }
-export const filterReducer = (state = 'all', action) => {
-    switch (action.type) {
-        case 'filter/set':
-            return action.payload
-        default:
-            return state
-    }
-}
-
 export const reducer = combineReducers({
     todos: combineReducers({
         entities: todosReducer,
