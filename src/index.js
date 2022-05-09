@@ -1,9 +1,9 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createStore } from 'redux'
-import App, { reducer } from './App'
+import { createStore, applyMiddleware } from 'redux'
+import App, { reducer, asyncMiddleware } from './App'
 import { Provider } from 'react-redux'
-const store = createStore(reducer)
+const store = createStore(reducer, applyMiddleware(asyncMiddleware))
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(

@@ -2,6 +2,13 @@ import { useState } from 'react'
 import { combineReducers } from 'redux'
 import { useDispatch, useSelector } from 'react-redux'
 
+export const asyncMiddleware = (store) => (next) => (action) => {
+    // console.log(store, next, action)
+    if (typeof ction === 'function') {
+        return action(store.dispatch, store.getState)
+    }
+    return next(action)
+}
 export const filterReducer = (state = 'all', action) => {
     switch (action.type) {
         case 'filter/set':
