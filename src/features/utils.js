@@ -1,3 +1,14 @@
+export const mat = (entity) => [
+    `${entity}/pending`,
+    `${entity}/fulfilled`,
+    `${entity}/rejected`,
+]
+
+export const asyncMac = (asyncTypes) => [
+    mac(asyncTypes[0]),
+    mac(asyncTypes[1], 'payload'),
+    mac(asyncTypes[2], 'error'),
+]
 export const mac =
     (type, ...argNames) =>
     (...args) => {
