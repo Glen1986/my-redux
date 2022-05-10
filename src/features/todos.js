@@ -34,7 +34,12 @@ export const fetchThunk = () => async (dispatch) => {
     }
 }
 
+const fulfilledReducer = makeSetReducer(['todos/fulfilled'])
+
 export const filterReducer = makeSetReducer(['filter/set'])
+export const crudReducer = makeCrudReducer(['todo/add', 'todos/complete'])
+
+export const todosReducer = reduceReducers(crudReducer, fulfilledReducer)
 
 export const fetchingReducer = makeFetchingReducer([
     'todos/pending',
@@ -42,22 +47,8 @@ export const fetchingReducer = makeFetchingReducer([
     'todos/rejected',
 ])
 
-const fulfilledReducer = makeSetReducer(['todos/fulfilled'])
-const crudReducer = makeCrudReducer(['todo/add', 'todo/complete'])
-
-export const todosReducer = reduceReducers(crudReducer, fulfilledReducer)
-// => {
-// switch (action.type) {
-// case 'todos/fulfilled': {
-// return action.payload
-// }
-// default:
-// return state
-// }
-// }
-
 export const reducer = combineReducers({
-    entities: combineReducers({
+    todos: combineReducers({
         entities: todosReducer,
         status: fetchingReducer,
     }),
